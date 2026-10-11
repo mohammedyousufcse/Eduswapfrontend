@@ -4,14 +4,14 @@ import { api, showToast, saveToken, clearToken } from './api.js';
 // auth.js — Login / Signup / Session management
 // ─────────────────────────────────────────────
 
-const GMAIL_RE = /^[a-z0-9._%+\-]{3,50}@gmail\.com$/i;
+const STUDENT_RE = /^[a-z0-9._%+\-]+@student\.tce\.edu$/i;
 
 function validateTCEEmail(email) {
   const lower = (email || '').toLowerCase().trim();
   const atIdx = lower.lastIndexOf('@');
   if (atIdx === -1) return { valid: false, role: null };
   const domain = lower.slice(atIdx + 1);
-  if (domain === 'gmail.com' && GMAIL_RE.test(lower)) return { valid: true, role: 'student' };
+  if (domain === 'student.tce.edu' && STUDENT_RE.test(lower)) return { valid: true, role: 'student' };
   return { valid: false, role: null };
 }
 
@@ -153,7 +153,7 @@ function initAuthPage() {
       const check = validateTCEEmail(signupEmail.value);
       const err = document.getElementById('signup-email-error');
       if (!check.valid && signupEmail.value) {
-        if (err) err.textContent = 'Please use a Gmail address (@gmail.com)';
+        if (err) err.textContent = 'Please use your student email (@student.tce.edu)';
         signupEmail.classList.add('error');
       } else {
         if (err) err.textContent = '';
@@ -236,7 +236,7 @@ function initAuthPage() {
       // Client-side validation
       const emailCheck = validateTCEEmail(email);
       if (!emailCheck.valid) {
-        showAlert('signupAlert', 'Please use a valid Gmail address (@gmail.com).', 'error');
+        showAlert('signupAlert', 'Please use a valid student email address (@student.tce.edu).', 'error');
         return;
       }
       if (pwd.length < 8) {
