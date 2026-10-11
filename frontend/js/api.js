@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────
 
 // 🔧 Change this to your deployed backend URL before deploying
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://eduswapbackend.onrender.com';
 
 /** Save / clear token in localStorage */
 function saveToken(token) { if (token) localStorage.setItem('eduswap_token', token); }
