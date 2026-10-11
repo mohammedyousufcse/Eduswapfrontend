@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Uploads — EduSwap · Mechanical Dept · TCE</title>
+  <meta name="description" content="Manage your uploaded study materials on EduSwap." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="toast-container"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-brand">
+      <div class="brand-logo">ES</div>
+      <div class="brand-text">
+        <div class="brand-name">EduSwap</div>
+        <div class="brand-sub">Mechanical · TCE</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <p class="nav-section-title">Navigation</p>
+      <a href="dashboard.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>Dashboard</a>
+      <a href="upload.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>Upload File</a>
+      <a href="my-uploads.html" class="nav-item active"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>My Uploads</a>
+      <p class="nav-section-title" style="margin-top:.5rem;">Account</p>
+      <a href="profile.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>Profile</a>
+      <button class="nav-item" data-action="logout" style="width:100%;background:none;border:none;text-align:left;color:var(--slate-600);"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>Logout</button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-pill" onclick="location.href='profile.html'">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div><div class="user-name" id="user-name">Loading…</div><div class="user-role" id="user-role"></div></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:22px;height:22px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <span class="topbar-title">📤 My Uploads</span>
+      </div>
+      <div class="topbar-right">
+        <a href="upload.html" class="btn btn-primary btn-sm">+ Upload New</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="page-header">
+        <h1>My Uploads</h1>
+        <p>Files you've shared - <span id="uploads-count">…</span></p>
+      </div>
+
+      <div class="file-table-wrapper">
+        <table class="file-table" aria-label="My uploaded files">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th class="hide-mobile">Category</th>
+              <th class="hide-mobile">Subject</th>
+              <th class="hide-mobile">Sem / Year</th>
+              <th class="hide-mobile">Downloads / Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="my-uploads-list">
+            <tr><td colspan="6"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="edit-modal-title">✏️ Edit File Details</h2>
+      <button id="close-edit-modal" class="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-form" novalidate>
+        <div class="form-group">
+          <label for="edit-title" class="form-label">Title *</label>
+          <input type="text" id="edit-title" class="form-input" required maxlength="200" />
+        </div>
+        <div class="form-group">
+          <label for="edit-description" class="form-label">Description</label>
+          <textarea id="edit-description" class="form-input" rows="2" maxlength="1000" style="resize:vertical;"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+          <div class="form-group">
+            <label for="edit-category" class="form-label">Category *</label>
+            <select id="edit-category" class="form-input form-select" required>
+              <option value="Question Paper">PY Terminal Question Papers</option>
+              <option value="Arrear Paper">Arrear Question Papers</option>
+              <option value="Notes">CAT I Question Papers</option>
+              <option value="Assignment">CAT II Question Papers</option>
+              <option value="Lab Manual">Notes</option>
+              <option value="Other">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-semester" class="form-label">Semester *</label>
+            <select id="edit-semester" class="form-input form-select" required>
+              <option value="1">Sem 1</option><option value="2">Sem 2</option>
+              <option value="3">Sem 3</option><option value="4">Sem 4</option>
+              <option value="5">Sem 5</option><option value="6">Sem 6</option>
+              <option value="7">Sem 7</option><option value="8">Sem 8</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-subject" class="form-label">Subject *</label>
+          <input type="text" id="edit-subject" class="form-input" required maxlength="150" />
+        </div>
+        <div class="form-group">
+          <label for="edit-exam-year" class="form-label">Exam Year</label>
+          <select id="edit-exam-year" class="form-input form-select">
+            <option value="">— None —</option>
+            <option value="2024">2024</option><option value="2023">2023</option>
+            <option value="2022">2022</option><option value="2021">2021</option>
+            <option value="2020">2020</option><option value="2019">2019</option>
+          </select>
+        </div>
+        <div class="modal-footer" style="padding:0;margin-top:1.25rem;border:none;">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('edit-modal-overlay').classList.remove('open')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/my-uploads.js"></script>
+</body>
+</html>

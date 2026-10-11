@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduSwap</title>
+  <meta name="description"
+    content="EduSwap: Upload and download study materials and previous-year question papers for the Mechanical Department at Thiagarajar College of Engineering." />
+  <link rel="stylesheet" href="css/auth.css" />
+  <style>
+    /* Spinner inline for button loading state */
+    .spinner-inline {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-alert {
+      display: none;
+    }
+
+    #resend-verification-btn {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #e84393;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+     RESET PASSWORD MODAL (shown when ?reset=<token> is in URL)
+════════════════════════════════════════════════════════════════ -->
+  <div id="reset-overlay" style="
+  display:none; position:fixed; inset:0;
+  background:rgba(15,23,42,0.6); backdrop-filter:blur(4px);
+  z-index:500; align-items:center; justify-content:center; padding:1rem;">
+    <div
+      style="background:white; border-radius:20px; padding:2rem 2.25rem; max-width:420px; width:100%; box-shadow:0 24px 80px rgba(0,0,0,.22);">
+      <h2
+        style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:0.5rem;color:#1e293b;">
+        Reset Password</h2>
+      <p style="font-size:0.875rem;color:#94a3b8;margin-bottom:1.5rem;">Enter your new password below.</p>
+      <div id="resetAlert" class="auth-alert" style="margin-bottom:1rem;"></div>
+      <form id="reset-password-form">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="auth-form .form-label"
+            style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#475569;display:block;margin-bottom:.375rem;">New
+            Password</label>
+          <div class="input-wrap" style="position:relative;">
+            <input type="password" id="reset-pwd" class="form-input"
+              style="width:100%;padding:.7rem 3rem .7rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.925rem;"
+              placeholder="Min. 8 characters" required />
+            <button type="button" class="eye-toggle"
+              style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);color:#94a3b8;background:none;border:none;cursor:pointer;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                stroke="currentColor" style="width:17px;height:17px;">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label
+            style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#475569;display:block;margin-bottom:.375rem;">Confirm
+            Password</label>
+          <input type="password" id="reset-confirm" class="form-input"
+            style="width:100%;padding:.7rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.925rem;"
+            placeholder="Repeat new password" required />
+        </div>
+        <button type="submit" class="auth-btn" id="reset-btn">Reset Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+     MAIN AUTH CARD
+════════════════════════════════════════════════════════════════ -->
+  <main class="auth-container" role="main">
+    <div class="auth-card">
+
+      <!-- ── Left colored panel ── -->
+      <aside class="auth-panel" aria-label="EduSwap branding">
+        <!-- Diamond logo mark -->
+        <div class="auth-logo-diamond" aria-hidden="true">
+          <span>ES</span>
+        </div>
+
+        <!-- Tab buttons (desktop only) -->
+        <div class="auth-tabs" role="tablist">
+          <button id="tab-login" class="auth-tab tab-login active" role="tab" aria-selected="true"
+            aria-controls="login-form-panel">
+            Login
+          </button>
+          <button id="tab-signup" class="auth-tab tab-signup" role="tab" aria-selected="false"
+            aria-controls="signup-form-panel">
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Brand info (mobile: shown inline in banner) -->
+        <div class="auth-panel-brand">
+          <h2>EduSwap</h2>
+          <p>Mechanical Dept<br>Thiagarajar College of Engineering</p>
+        </div>
+      </aside>
+
+      <!-- ── Right form panel ── -->
+      <section class="auth-form-panel" aria-label="Authentication forms">
+        <div class="forms-slider" id="forms-slider">
+
+          <!-- ═══ LOGIN FORM ═══ -->
+          <div class="form-panel" id="login-form-panel" role="tabpanel" aria-labelledby="tab-login">
+            <h2>Welcome back</h2>
+            <p class="form-subtitle">Sign in with your Email</p>
+
+            <!-- Alert banner -->
+            <div id="loginAlert" class="auth-alert" role="alert"></div>
+
+            <form id="login-form" class="auth-form" novalidate>
+              <!-- Email -->
+              <div class="form-group">
+                <label for="login-email" class="form-label">Email</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                  <input type="email" id="login-email" class="form-input" placeholder="Enter your email"
+                    autocomplete="email" required />
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label for="login-password" class="form-label">Password</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+                  <input type="password" id="login-password" class="form-input" placeholder="Your password"
+                    autocomplete="current-password" required />
+                  <button type="button" class="eye-toggle" aria-label="Toggle password visibility">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  </button>
+                </div>
+                <a href="#" id="forgot-password-link" class="forgot-link">Forgot Password?</a>
+              </div>
+
+              <button type="submit" id="login-btn" class="auth-btn" style="margin-top:1.25rem;">
+                Login
+              </button>
+
+              <button type="button" id="resend-verification-btn" class="hidden">
+                Resend verification email
+              </button>
+            </form>
+
+            <p class="auth-switch">
+              Don't have an account?
+              <a data-goto="signup" role="button">Sign Up</a>
+            </p>
+          </div>
+
+          <!-- ═══ SIGNUP FORM ═══ -->
+          <div class="form-panel" id="signup-form-panel" role="tabpanel" aria-labelledby="tab-signup">
+            <h2>Create account</h2>
+            <p class="form-subtitle">Join EduSwap with your email</p>
+
+            <!-- Alert banner -->
+            <div id="signupAlert" class="auth-alert" role="alert"></div>
+
+            <form id="signup-form" class="auth-form" novalidate>
+              <!-- Name -->
+              <div class="form-group">
+                <label for="signup-name" class="form-label">Full Name</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <input type="text" id="signup-name" class="form-input" placeholder="Enter your name" required
+                    autocomplete="name" />
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="signup-email" class="form-label">Email</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                  <input type="email" id="signup-email" class="form-input" placeholder="Enter your email"
+                    required autocomplete="email" />
+                </div>
+                <span id="signup-email-error" class="field-error"></span>
+              </div>
+
+              <!-- Role toggle -->
+              <div class="form-group">
+                <label class="form-label">I am a</label>
+                <div class="role-toggle" role="group" aria-label="Select role">
+                  <div class="role-option active" data-role="student" tabindex="0" role="button" aria-pressed="true">🎓
+                    Student</div>
+                  <div class="role-option" data-role="faculty" tabindex="0" role="button" aria-pressed="false">👨‍🏫
+                    Faculty</div>
+                </div>
+                <input type="hidden" id="signup-role" value="student" />
+              </div>
+
+              <!-- Two-col row: Roll No + Semester -->
+              <div class="form-row">
+                <div class="form-group" id="roll-group">
+                  <label for="signup-roll" class="form-label">Roll Number</label>
+                  <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke-width="1.8" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                    </svg>
+                    <input type="text" id="signup-roll" class="form-input" placeholder="Enter your roll number" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="signup-semester" class="form-label">Semester</label>
+                  <select id="signup-semester" class="form-input form-select" >
+                    <option value="">Semester</option>
+                    <option value="1">1st Sem</option>
+                    <option value="2">2nd Sem</option>
+                    <option value="3">3rd Sem</option>
+                    <option value="4">4th Sem</option>
+                    <option value="5">5th Sem</option>
+                    <option value="6">6th Sem</option>
+                    <option value="7">7th Sem</option>
+                    <option value="8">8th Sem</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Department (fixed) -->
+              <div class="form-group">
+                <label class="form-label">Department</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                  </svg>
+                  <input type="text" class="form-input" value="Mechanical Engineering" readonly />
+                </div>
+              </div>
+
+              <!-- Password row -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="signup-password" class="form-label">Password</label>
+                  <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke-width="1.8" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    <input type="password" id="signup-password" class="form-input" placeholder="Min 8 chars" required />
+                    <button type="button" class="eye-toggle" aria-label="Toggle password">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="signup-confirm" class="form-label">Confirm</label>
+                  <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke-width="1.8" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                    </svg>
+                    <input type="password" id="signup-confirm" class="form-input" placeholder="Repeat" required />
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" id="signup-btn" class="auth-btn">
+                Sign Up
+              </button>
+            </form>
+
+            <p class="auth-switch">
+              Already have an account?
+              <a data-goto="login" role="button">Login</a>
+            </p>
+          </div>
+          <!-- end signup panel -->
+
+        </div><!-- end forms-slider -->
+      </section>
+
+    </div><!-- end auth-card -->
+  </main>
+
+  <script type="module">
+    import { redirectIfLoggedIn, initAuthPage } from './js/auth.js';
+    import { api, showToast } from './js/api.js';
+
+    // Don't show login page if already logged in
+    redirectIfLoggedIn();
+
+    // Initialize all form logic
+    initAuthPage();
+
+    // ── Reset Password (if ?reset= is in URL) ──────────────
+    const params = new URLSearchParams(window.location.search);
+    const resetToken = params.get('reset');
+    if (resetToken && resetToken.length > 10) {
+      const overlay = document.getElementById('reset-overlay');
+      overlay.style.display = 'flex';
+
+      // Eye toggle in reset form
+      document.querySelector('#reset-overlay .eye-toggle')?.addEventListener('click', function () {
+        const input = document.getElementById('reset-pwd');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+
+      document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('reset-pwd').value;
+        const confirmPassword = document.getElementById('reset-confirm').value;
+        const btn = document.getElementById('reset-btn');
+
+        btn.disabled = true;
+        btn.textContent = 'Resetting…';
+
+        const { ok, data } = await api.post('/auth/reset-password', { token: resetToken, password, confirmPassword });
+
+        if (ok) {
+          overlay.style.display = 'none';
+          showToast('Password reset! Please log in.', 'success');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          const alertEl = document.getElementById('resetAlert');
+          alertEl.className = 'auth-alert error';
+          alertEl.textContent = data.message || 'Reset failed.';
+          alertEl.style.display = 'flex';
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Reset Password';
+      });
+    }
+  </script>
+
+</body>
+
+</html>

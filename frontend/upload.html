@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload File - EduSwap · Mechanical Dept · TCE</title>
+  <meta name="description" content="Upload study materials and question papers for the Mechanical Department at TCE." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="toast-container"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<div class="app-shell">
+
+  <!-- ════════════════ SIDEBAR ════════════════ -->
+  <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-brand">
+      <div class="brand-logo">ES</div>
+      <div class="brand-text">
+        <div class="brand-name">EduSwap</div>
+        <div class="brand-sub">Mechanical · TCE</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <p class="nav-section-title">Navigation</p>
+      <a href="dashboard.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+        Dashboard
+      </a>
+      <a href="upload.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+        Upload File
+      </a>
+      <a href="my-uploads.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+        My Uploads
+      </a>
+      <p class="nav-section-title" style="margin-top:.5rem;">Account</p>
+      <a href="profile.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        Profile
+      </a>
+      <button class="nav-item" data-action="logout" style="width:100%;background:none;border:none;text-align:left;color:var(--slate-600);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+        Logout
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-pill" onclick="location.href='profile.html'">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div>
+          <div class="user-name" id="user-name">Loading…</div>
+          <div class="user-role" id="user-role"></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════ MAIN ════════════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:22px;height:22px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <span class="topbar-title">⬆ Upload File</span>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="page-header">
+        <h1>Upload Study Material</h1>
+        <p>Share notes, question papers, and resources with your classmates instantly visible after upload.</p>
+      </div>
+
+      <div style="max-width:680px;">
+        <div class="card">
+          <div class="card-header">
+            <span style="font-weight:700;color:var(--slate-700); ">📎 Select File</span>
+            <span class="badge badge-slate">Max 20 MB · PDF, DOCX, PPTX, JPG, PNG</span>
+          </div>
+          <div class="card-body">
+
+            <!-- Drop zone -->
+            <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Drop file here or click to browse">
+              <input type="file" id="file-input" accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-label="Choose file" />
+              <div class="drop-zone-icon">📂</div>
+              <p class="drop-zone-text">Drop your file here, or click to browse</p>
+              <p class="drop-zone-sub">PDF · DOCX · PPTX · JPG · PNG · Max 20 MB</p>
+            </div>
+
+            <!-- File preview chip -->
+            <div id="file-preview" class="hidden" style="
+              display:flex; align-items:center; gap:.75rem;
+              margin-top:1rem; padding:.75rem 1rem;
+              background:var(--slate-50); border:1.5px solid var(--slate-200);
+              border-radius:var(--radius-md);">
+              <span id="preview-icon" style="font-size:1.5rem;">📄</span>
+              <div style="flex:1; min-width:0;">
+                <div id="preview-name" class="truncate" style="font-weight:600;font-size:.875rem;color:var(--slate-800);"></div>
+                <div id="preview-size" style="font-size:.75rem;color:var(--slate-400);"></div>
+              </div>
+              <button type="button" onclick="document.getElementById('file-input').value='';document.getElementById('file-preview').classList.add('hidden');document.querySelector('.drop-zone-text').textContent='Drop your file here, or click to browse';document.querySelector('.drop-zone-sub').textContent='PDF · DOCX · PPTX · JPG · PNG · Max 20 MB';"
+                style="color:var(--slate-400);background:none;border:none;cursor:pointer;font-size:1rem;">✕</button>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1.25rem;">
+          <div class="card-header">
+            <span style="font-weight:700;color:var(--slate-700);">📝 File Details</span>
+          </div>
+          <div class="card-body">
+            <form id="upload-form" novalidate>
+
+              <div class="form-group">
+                <label for="upload-title" class="form-label">Title <span style="color:var(--error);">*</span></label>
+                <input type="text" id="upload-title" class="form-input" placeholder="e.g. Engineering Thermodynamics QP Nov 2023" required maxlength="200" />
+              </div>
+
+              <div class="form-group">
+                <label for="upload-description" class="form-label">Description (optional)</label>
+                <textarea id="upload-description" class="form-input form-textarea" rows="3" placeholder="Add any notes or context…" maxlength="1000" style="resize:vertical;"></textarea>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;">
+                <div class="form-group">
+                  <label for="upload-category" class="form-label">Category <span style="color:var(--error);">*</span></label>
+                  <select id="upload-category" class="form-input form-select" required>
+                    <option value="">Select…</option>
+                    <option value="Question Paper">PY Terminal Question Papers</option>
+                    <option value="Arrear Paper">Arrear Question Papers</option>
+                    <option value="Notes">CAT I Question Papers </option>
+                    <option value="Assignment">CAT II Question Papers </option>
+                    <option value="Lab Manual">Notes</option>
+                    <option value="Other">Others</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="upload-semester" class="form-label">Semester <span style="color:var(--error);">*</span></label>
+                  <select id="upload-semester" class="form-input form-select" required>
+                    <option value="">Select…</option>
+                    <option value="1">1st Sem</option>
+                    <option value="2">2nd Sem</option>
+                    <option value="3">3rd Sem</option>
+                    <option value="4">4th Sem</option>
+                    <option value="5">5th Sem</option>
+                    <option value="6">6th Sem</option>
+                    <option value="7">7th Sem</option>
+                    <option value="8">8th Sem</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="upload-subject" class="form-label">Subject <span style="color:var(--error);">*</span></label>
+                <input type="text" id="upload-subject" class="form-input" placeholder="e.g. 22MEXXX - Engineering Thermodynamics" required maxlength="150" />
+              </div>
+
+              <div class="form-group" id="exam-year-group">
+                <label for="upload-exam-year" class="form-label">Exam Year</label>
+                <select id="upload-exam-year" class="form-input form-select">
+                  <option value="">Select year…</option>
+                  <option value="2026">2030</option>
+                  <option value="2026">2029</option>
+                  <option value="2026">2028</option>
+                  <option value="2026">2027</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                  <option value="2019">2019</option>
+                  <option value="2018">2018</option>
+                  <option value="2017">2017</option>
+                  <option value="2016">2016</option>
+                </select>
+              </div>
+
+              
+
+              <!-- Progress bar -->
+              <div id="progress-wrapper" class="hidden" style="margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--slate-500);margin-bottom:.375rem;">
+                  <span>Uploading…</span>
+                  <span id="progress-pct">0%</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                  <div id="upload-progress" class="progress-bar" style="width:0%;"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary btn-lg" style="flex:1;">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                  Upload File
+                </button>
+                <a href="dashboard.html" class="btn btn-secondary btn-lg">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="module" src="js/upload.js"></script>
+</body>
+</html>
